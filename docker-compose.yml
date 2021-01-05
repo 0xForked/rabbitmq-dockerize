@@ -1,0 +1,24 @@
+version: '3.5'
+
+networks:
+  backend:
+    driver: ${NETWORKS_DRIVER}
+    
+services:
+  rabbitmq:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - "${RABBITMQ_NODE_HOST_PORT}:5672"
+        - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672"
+        - "${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15671"
+      privileged: true
+      environment:
+        - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+        - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      volumes:
+        - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+      networks:
+        - backend
+      restart: on-failure:3
